@@ -65,10 +65,11 @@ resource "aws_api_gateway_method_response" "contact_post_response" {
   http_method = aws_api_gateway_method.contact_post.http_method
   status_code = "200"
 
-  response_headers = {
-    "Access-Control-Allow-Origin"  = true
-    "Access-Control-Allow-Headers" = true
-    "Access-Control-Allow-Methods" = true
+  
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin"  = true
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
   }
 }
 
@@ -79,10 +80,10 @@ resource "aws_api_gateway_method_response" "contact_options_response" {
   http_method = aws_api_gateway_method.contact_options.http_method
   status_code = "200"
 
-  response_headers = {
-    "Access-Control-Allow-Origin"  = true
-    "Access-Control-Allow-Headers" = true
-    "Access-Control-Allow-Methods" = true
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin"  = true
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
   }
 }
 

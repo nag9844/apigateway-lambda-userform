@@ -2,7 +2,6 @@
 resource "aws_ses_email_identity" "notification_email" {
   email = var.notification_email
 
-  tags = var.tags
 }
 
 # SES configuration set
@@ -13,7 +12,6 @@ resource "aws_ses_configuration_set" "contact_form" {
     tls_policy = "Require"
   }
 
-  tags = var.tags
 }
 
 # SES event destination for tracking
