@@ -3,6 +3,10 @@ variable "project_name" {
   type        = string
 }
 
+variable "region" {
+  default = "ap-south-1"
+}
+
 variable "environment" {
   description = "Environment name"
   type        = string
