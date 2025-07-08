@@ -117,34 +117,3 @@ jobs:
         echo "API Endpoint: ${{ needs.deploy-infrastructure.outputs.api_endpoint }}"
         echo "You can deploy the 'dist' folder to your preferred hosting service"
         ls -la dist/
-
-  cleanup:
-    name: Cleanup
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v3
-      with:
-        terraform_version: ${{ env.TF_VERSION }}
-
-    - name: Configure AWS Credentials (OIDC)
-      uses: aws-actions/configure-aws-credentials@v3
-      with:
-        role-to-assume: arn:aws:iam::199570228070:role/oidc-demo-role
-        aws-region: ${{ env.AWS_REGION }}
-
-    - name: Terraform Init
-      run: terraform init
-      working-directory: ./terraform
-
-    - name: Terraform Destroy
-      run: terraform destroy -auto-approve -no-color
-      working-directory: ./terraform
-      env:
-        TF_VAR_notification_email: ${{ secrets.NOTIFICATION_EMAIL }}
-        TF_VAR_project_name: serverless-contact-form
-        TF_VAR_environment: manual-cleanup
