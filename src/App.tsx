@@ -77,8 +77,8 @@ const App: React.FC = () => {
     
     try {
       // Replace with your actual API Gateway endpoint
-      const apiEndpoint = import.meta.env.VITE_API_ENDPOINT || 'https://lrhh14e1j5.execute-api.ap-south-1.amazonaws.com/prod/contact';
-      
+      //const apiEndpoint = import.meta.env.VITE_API_ENDPOINT || 'https://lrhh14e1j5.execute-api.ap-south-1.amazonaws.com/prod/contact';
+      const apiEndpoint = 'https://lrhh14e1j5.execute-api.ap-south-1.amazonaws.com/prod/contact';
       const response = await fetch(apiEndpoint, {
         method: 'POST',
         headers: {
