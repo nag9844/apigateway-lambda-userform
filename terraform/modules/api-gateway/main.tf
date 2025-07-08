@@ -94,11 +94,13 @@ resource "aws_api_gateway_integration_response" "contact_options_integration_res
   http_method = aws_api_gateway_method.contact_options.http_method
   status_code = aws_api_gateway_method_response.contact_options_response.status_code
 
-  response_headers = {
-    "Access-Control-Allow-Origin"  = "'*'"
-    "Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
-    "Access-Control-Allow-Methods" = "'OPTIONS,POST'"
+  
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+    "method.response.header.Access-Control-Allow-Methods" = "'OPTIONS,POST'"
   }
+
 
   depends_on = [aws_api_gateway_integration.contact_options_integration]
 }
