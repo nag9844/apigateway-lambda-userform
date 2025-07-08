@@ -2,7 +2,7 @@
 
 A production-ready serverless contact form solution built with React, AWS Lambda, API Gateway, DynamoDB, and SES. Infrastructure is managed with Terraform and deployed via GitHub Actions.
 
-## 🏗️ Architecture
+## Architecture
 
 ```
 Frontend (React) → API Gateway → Lambda → DynamoDB
@@ -20,7 +20,7 @@ Frontend (React) → API Gateway → Lambda → DynamoDB
 - **Terraform**: Infrastructure as Code
 - **GitHub Actions**: CI/CD pipeline
 
-## 🚀 Features
+## Features
 
 - ✅ Beautiful, responsive contact form
 - ✅ Real-time form validation
@@ -34,14 +34,14 @@ Frontend (React) → API Gateway → Lambda → DynamoDB
 - ✅ Comprehensive error handling
 - ✅ Request logging and monitoring
 
-## 📋 Prerequisites
+## Prerequisites
 
 - AWS Account with appropriate permissions
 - Terraform >= 1.0
 - Node.js >= 18
 - Git
 
-## 🛠️ Local Development
+## Local Development
 
 1. **Clone the repository**
    ```bash
@@ -59,7 +59,7 @@ Frontend (React) → API Gateway → Lambda → DynamoDB
    npm run dev
    ```
 
-## 🏗️ Infrastructure Deployment
+## Infrastructure Deployment
 
 ### Manual Deployment
 
@@ -112,7 +112,7 @@ The GitHub Actions workflow will:
 - Build and prepare frontend
 - Output the API endpoint
 
-## 📧 SES Configuration
+## SES Configuration
 
 1. **Verify email address**
    - Go to AWS SES Console
@@ -123,7 +123,7 @@ The GitHub Actions workflow will:
    - By default, SES is in sandbox mode
    - Request production access to send emails to any address
 
-## 🔧 Configuration
+## Configuration
 
 ### Environment Variables
 
@@ -143,7 +143,7 @@ VITE_API_ENDPOINT=https://your-api-gateway-url.amazonaws.com/prod/contact
 | `lambda_timeout` | Lambda timeout (seconds) | `30` |
 | `lambda_memory_size` | Lambda memory (MB) | `128` |
 
-## 📊 Monitoring
+## Monitoring
 
 ### CloudWatch Logs
 - Lambda function logs: `/aws/lambda/{function-name}`
@@ -159,7 +159,7 @@ VITE_API_ENDPOINT=https://your-api-gateway-url.amazonaws.com/prod/contact
 - Check bounce and complaint rates
 - Review reputation metrics
 
-## 🔒 Security Features
+## Security Features
 
 - Input validation and sanitization
 - CORS configuration
@@ -168,14 +168,14 @@ VITE_API_ENDPOINT=https://your-api-gateway-url.amazonaws.com/prod/contact
 - SES TLS enforcement
 - Request rate limiting (API Gateway)
 
-## 💰 Cost Optimization
+## Cost Optimization
 
 - **Lambda**: Pay per request (free tier: 1M requests/month)
 - **API Gateway**: Pay per request (free tier: 1M requests/month)
 - **DynamoDB**: Pay per request (free tier: 25GB storage)
 - **SES**: Pay per email (free tier: 62,000 emails/month)
 
-## 🧪 Testing
+## Testing
 
 ### Local Testing
 ```bash
@@ -194,7 +194,7 @@ curl -X POST https://your-api-endpoint.com/prod/contact \
   }'
 ```
 
-## 🚨 Troubleshooting
+##  Troubleshooting
 
 ### Common Issues
 
@@ -225,7 +225,7 @@ aws logs tail /aws/lambda/your-function-name --follow
 aws logs describe-log-groups --log-group-name-prefix API-Gateway-Execution-Logs
 ```
 
-## 🔄 Updates and Maintenance
+## Updates and Maintenance
 
 ### Updating Infrastructure
 ```bash
@@ -244,7 +244,7 @@ terraform apply
 2. Build: `npm run build`
 3. Deploy to your hosting service
 
-## 📝 API Documentation
+## API Documentation
 
 ### POST /contact
 
@@ -275,26 +275,5 @@ terraform apply
 }
 ```
 
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## 🆘 Support
-
-For issues and questions:
-1. Check the troubleshooting section
-2. Review AWS CloudWatch logs
-3. Open an issue on GitHub
-4. Check AWS documentation
-
----
 
 **Built with ❤️ using AWS Serverless Technologies**
