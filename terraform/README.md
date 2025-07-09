@@ -22,12 +22,9 @@ Frontend → API Gateway → Lambda → DynamoDB
 
 ## Features
 
--  Beautiful, responsive contact form
--  Real-time form validation
 -  Serverless architecture (pay-per-use)
--  Email notifications with HTML templates
+-  Email notifications 
 -  Data persistence in DynamoDB
--  CORS support for cross-origin requests
 -  Input sanitization and security
 -  Infrastructure as Code with Terraform
 -  Automated deployment with GitHub Actions
