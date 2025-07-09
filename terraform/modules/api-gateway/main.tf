@@ -1,3 +1,6 @@
+# Data source for current region
+data "aws_region" "current" {}
+
 # API Gateway REST API
 resource "aws_api_gateway_rest_api" "contact_form_api" {
   name        = "${var.project_name}-${var.environment}-api"
@@ -41,7 +44,7 @@ resource "aws_api_gateway_integration" "contact_post_integration" {
 
   integration_http_method = "POST"
   type                   = "AWS_PROXY"
-  uri                    = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/${var.lambda_function_arn}/invocations"
+  uri                    = "arn:aws:apigateway:${data.aws_region.current.name}:lambda:path/2015-03-31/functions/${var.lambda_function_arn}/invocations"
 }
 
 # API Gateway Integration - OPTIONS (for CORS)
@@ -65,7 +68,6 @@ resource "aws_api_gateway_method_response" "contact_post_response" {
   http_method = aws_api_gateway_method.contact_post.http_method
   status_code = "200"
 
-  
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin"  = true
     "method.response.header.Access-Control-Allow-Headers" = true
@@ -94,13 +96,11 @@ resource "aws_api_gateway_integration_response" "contact_options_integration_res
   http_method = aws_api_gateway_method.contact_options.http_method
   status_code = aws_api_gateway_method_response.contact_options_response.status_code
 
-  
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin"  = "'*'"
     "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
     "method.response.header.Access-Control-Allow-Methods" = "'OPTIONS,POST'"
   }
-
 
   depends_on = [aws_api_gateway_integration.contact_options_integration]
 }
@@ -119,6 +119,9 @@ resource "aws_api_gateway_deployment" "contact_form_deployment" {
   depends_on = [
     aws_api_gateway_integration.contact_post_integration,
     aws_api_gateway_integration.contact_options_integration,
+    aws_api_gateway_method_response.contact_post_response,
+    aws_api_gateway_method_response.contact_options_response,
+    aws_api_gateway_integration_response.contact_options_integration_response,
   ]
 
   rest_api_id = aws_api_gateway_rest_api.contact_form_api.id
@@ -130,6 +133,9 @@ resource "aws_api_gateway_deployment" "contact_form_deployment" {
       aws_api_gateway_method.contact_options.id,
       aws_api_gateway_integration.contact_post_integration.id,
       aws_api_gateway_integration.contact_options_integration.id,
+      aws_api_gateway_method_response.contact_post_response.id,
+      aws_api_gateway_method_response.contact_options_response.id,
+      aws_api_gateway_integration_response.contact_options_integration_response.id,
     ]))
   }
 
