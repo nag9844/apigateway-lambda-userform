@@ -39,7 +39,7 @@ function App() {
 
     try {
       // Replace with your actual API endpoint from Terraform output
-      const API_ENDPOINT = 'https://your-api-id.execute-api.us-east-1.amazonaws.com/prod/contact';
+      const API_ENDPOINT = 'https://your-api-id.execute-api.ap-south-1.amazonaws.com/prod/contact';
       
       const response = await fetch(API_ENDPOINT, {
         method: 'POST',

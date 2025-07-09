@@ -7,6 +7,9 @@ permissions:
   id-token: write
   contents: read
 
+env:
+  AWS_REGION: ap-south-1
+
 jobs:
   terraform:
     name: 'Terraform'
