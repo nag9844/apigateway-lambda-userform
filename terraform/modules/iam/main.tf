@@ -58,9 +58,13 @@ resource "aws_iam_role_policy" "ses_policy" {
         Effect = "Allow"
         Action = [
           "ses:SendEmail",
-          "ses:SendRawEmail"
+          "ses:SendRawEmail",
+          "ses:GetSendQuota",
+          "ses:GetSendStatistics"
         ]
-        Resource = "arn:aws:ses:*:*:identity/${var.ses_domain}"
+        Resource = [
+          "arn:aws:ses:*:*:identity/${var.notification_email}"
+        ]
       }
     ]
   })

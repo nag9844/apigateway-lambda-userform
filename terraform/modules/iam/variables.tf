@@ -12,3 +12,8 @@ variable "ses_domain" {
   description = "SES domain"
   type        = string
 }
+
+variable "notification_email" {
+  description = "Email address for SES notifications"
+  type        = string
+}
