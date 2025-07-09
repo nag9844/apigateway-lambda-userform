@@ -3,12 +3,6 @@ output "api_endpoint" {
   value       = module.api_gateway.api_endpoint
 }
 
-output "api_key" {
-  description = "API Gateway API key"
-  value       = module.api_gateway.api_key
-  sensitive   = true
-}
-
 output "lambda_function_arn" {
   description = "Lambda function ARN"
   value       = module.lambda.lambda_function_arn

@@ -1,3 +1,6 @@
+# Data source for current region
+data "aws_region" "current" {}
+
 resource "aws_api_gateway_rest_api" "contact_form_api" {
   name        = var.api_name
   description = "API for contact form submissions"
@@ -39,9 +42,11 @@ resource "aws_api_gateway_method_response" "options_response" {
   resource_id = aws_api_gateway_resource.contact_resource.id
   http_method = aws_api_gateway_method.options_method.http_method
   status_code = "200"
-
-  response_models = {
-    "application/json" = "Empty"
+  
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+    "method.response.header.Access-Control-Allow-Origin"  = true
   }
 }
 
@@ -85,21 +90,6 @@ resource "aws_api_gateway_method_response" "post_response" {
   response_models = {
     "application/json" = "Empty"
   }
-
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = true
-  }
-}
-
-resource "aws_api_gateway_integration_response" "post_integration_response" {
-  rest_api_id = aws_api_gateway_rest_api.contact_form_api.id
-  resource_id = aws_api_gateway_resource.contact_resource.id
-  http_method = aws_api_gateway_method.post_method.http_method
-  status_code = aws_api_gateway_method_response.post_response.status_code
-
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = "'*'"
-  }
 }
 
 # API Gateway deployment
@@ -112,20 +102,11 @@ resource "aws_api_gateway_deployment" "api_deployment" {
   rest_api_id = aws_api_gateway_rest_api.contact_form_api.id
 }
 
+# Stage for the deployment
 resource "aws_api_gateway_stage" "prod" {
-  stage_name    = "prod"
-  rest_api_id   = aws_api_gateway_rest_api.contact_form_api.id
   deployment_id = aws_api_gateway_deployment.api_deployment.id
-}
-
-# API Key
-resource "aws_api_gateway_api_key" "contact_form_key" {
-  name = "${var.api_name}-key"
+  rest_api_id   = aws_api_gateway_rest_api.contact_form_api.id
+  stage_name    = "prod"
+  
   tags = var.tags
-}
-
-resource "aws_api_gateway_usage_plan_key" "contact_form_plan_key" {
-  key_id        = aws_api_gateway_api_key.contact_form_key.id
-  key_type      = "API_KEY"
-  usage_plan_id = aws_api_gateway_usage_plan.contact_form_plan.id
 }
