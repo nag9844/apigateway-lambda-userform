@@ -1,9 +1,7 @@
-# Copy this file to terraform.tfvars and update with your values
-
-aws_region = "ap-south-1"
+aws_region           = "ap-south-1"
 lambda_function_name = "contact-form-handler"
-dynamodb_table_name = "contact-form-submissions"
-api_name = "contact-form-api"
+dynamodb_table_name  = "contact-form-submissions"
+api_name             = "contact-form-api"
 
 # Must be a verified domain in SES
 ses_domain = "gmail.com"
