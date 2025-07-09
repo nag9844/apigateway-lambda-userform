@@ -1,9 +1,22 @@
 const AWS = require('aws-sdk');
 const { v4: uuidv4 } = require('uuid');
 
+// Enable detailed logging
+console.log('Lambda function starting...');
+console.log('Environment variables:', {
+    DYNAMODB_TABLE_NAME: process.env.DYNAMODB_TABLE_NAME,
+    NOTIFICATION_EMAIL: process.env.NOTIFICATION_EMAIL,
+    NODE_ENV: process.env.NODE_ENV,
+    AWS_REGION: process.env.AWS_REGION
+});
+
 // Initialize AWS services
-const dynamodb = new AWS.DynamoDB.DocumentClient();
-const ses = new AWS.SES();
+const dynamodb = new AWS.DynamoDB.DocumentClient({
+    region: process.env.AWS_REGION || 'ap-south-1'
+});
+const ses = new AWS.SES({
+    region: process.env.AWS_REGION || 'ap-south-1'
+});
 
 // Environment variables
 const DYNAMODB_TABLE_NAME = process.env.DYNAMODB_TABLE_NAME;
@@ -52,6 +65,8 @@ function sanitizeInput(str) {
 
 // Save to DynamoDB
 async function saveToDatabase(data) {
+    console.log('💾 Attempting to save to DynamoDB table:', DYNAMODB_TABLE_NAME);
+    
     const item = {
         id: uuidv4(),
         name: sanitizeInput(data.name.trim()),
@@ -68,12 +83,25 @@ async function saveToDatabase(data) {
         Item: item
     };
     
-    await dynamodb.put(params).promise();
+    console.log('📝 DynamoDB put params:', JSON.stringify(params, null, 2));
+    
+    try {
+        await dynamodb.put(params).promise();
+        console.log('✅ Successfully saved to DynamoDB');
+    } catch (error) {
+        console.error('❌ DynamoDB error:', error);
+        throw error;
+    }
+    
     return item;
 }
 
 // Send notification email
 async function sendNotificationEmail(data) {
+    console.log('📧 Attempting to send email via SES');
+    console.log('📬 From email:', NOTIFICATION_EMAIL);
+    console.log('📮 To email:', NOTIFICATION_EMAIL);
+    
     const htmlBody = `
         <!DOCTYPE html>
         <html>
@@ -161,16 +189,30 @@ IP Address: ${data.sourceIp || 'unknown'}
         ReplyToAddresses: [data.email]
     };
     
-    await ses.sendEmail(params).promise();
+    console.log('📧 SES email params prepared');
+    
+    try {
+        const result = await ses.sendEmail(params).promise();
+        console.log('✅ Email sent successfully:', result.MessageId);
+    } catch (error) {
+        console.error('❌ SES error:', error);
+        throw error;
+    }
 }
 
 // Main Lambda handler
 exports.handler = async (event) => {
-    console.log('Event:', JSON.stringify(event, null, 2));
+    console.log('📥 Received event:', JSON.stringify(event, null, 2));
+    console.log('🔧 Environment check:', {
+        tableName: DYNAMODB_TABLE_NAME,
+        notificationEmail: NOTIFICATION_EMAIL ? 'SET' : 'NOT SET',
+        region: process.env.AWS_REGION
+    });
     
     try {
         // Handle CORS preflight
         if (event.httpMethod === 'OPTIONS') {
+            console.log('✅ Handling OPTIONS request');
             return {
                 statusCode: 200,
                 headers: corsHeaders,
@@ -180,6 +222,7 @@ exports.handler = async (event) => {
         
         // Only allow POST requests
         if (event.httpMethod !== 'POST') {
+            console.log('❌ Method not allowed:', event.httpMethod);
             return {
                 statusCode: 405,
                 headers: corsHeaders,
@@ -190,8 +233,11 @@ exports.handler = async (event) => {
         // Parse request body
         let requestBody;
         try {
+            console.log('📝 Parsing request body:', event.body);
             requestBody = JSON.parse(event.body);
+            console.log('✅ Parsed body:', requestBody);
         } catch (error) {
+            console.log('❌ JSON parse error:', error.message);
             return {
                 statusCode: 400,
                 headers: corsHeaders,
@@ -205,7 +251,9 @@ exports.handler = async (event) => {
         
         // Validate input
         const validationErrors = validateInput(requestBody);
+        console.log('🔍 Validation result:', validationErrors);
         if (validationErrors.length > 0) {
+            console.log('❌ Validation failed:', validationErrors);
             return {
                 statusCode: 400,
                 headers: corsHeaders,
@@ -217,14 +265,17 @@ exports.handler = async (event) => {
         }
         
         // Save to database
+        console.log('💾 Saving to database...');
         const savedItem = await saveToDatabase(requestBody);
-        console.log('Saved to database:', savedItem.id);
+        console.log('✅ Saved to database:', savedItem.id);
         
         // Send notification email
+        console.log('📧 Sending notification email...');
         await sendNotificationEmail(requestBody);
-        console.log('Notification email sent');
+        console.log('✅ Notification email sent');
         
         // Return success response
+        console.log('🎉 Returning success response');
         return {
             statusCode: 200,
             headers: corsHeaders,
@@ -236,7 +287,8 @@ exports.handler = async (event) => {
         };
         
     } catch (error) {
-        console.error('Error processing request:', error);
+        console.error('💥 Error processing request:', error);
+        console.error('📊 Error stack:', error.stack);
         
         return {
             statusCode: 500,
