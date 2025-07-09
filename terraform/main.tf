@@ -23,6 +23,7 @@ module "iam" {
   lambda_function_name = var.lambda_function_name
   dynamodb_table_name  = var.dynamodb_table_name
   ses_domain          = var.ses_domain
+  notification_email  = var.notification_email
 }
 
 # DynamoDB module
