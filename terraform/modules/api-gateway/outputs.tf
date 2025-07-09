@@ -18,5 +18,3 @@ output "stage_name" {
   value       = aws_api_gateway_stage.contact_form_stage.stage_name
 }
 
-# Data source for current region
-data "aws_region" "current" {}
