@@ -52,9 +52,9 @@ jobs:
       continue-on-error: true
     
     - name: Terraform Apply
-      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push' || github.event_name == 'workflow_dispatch'
       run: terraform apply -auto-approve
     
     - name: Output API Endpoint
-      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push' || github.event_name == 'workflow_dispatch'
       run: terraform output api_endpoint
