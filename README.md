@@ -78,7 +78,7 @@ Frontend (React) → API Gateway → Lambda → DynamoDB
 
 3. **Edit terraform.tfvars**
    ```hcl
-   aws_region = "us-east-1"
+   aws_region = "ap-south-1"
    project_name = "serverless-contact-form"
    environment = "prod"
    notification_email = "your-email@example.com"
@@ -138,7 +138,7 @@ VITE_API_ENDPOINT=https://your-api-gateway-url.amazonaws.com/prod/contact
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `aws_region` | AWS region | `us-east-1` |
+| `aws_region` | AWS region | `ap-south-1` |
 | `project_name` | Project name | `serverless-contact-form` |
 | `environment` | Environment | `dev` |
 | `notification_email` | Email for notifications | Required |

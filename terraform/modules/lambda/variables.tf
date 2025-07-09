@@ -1,10 +1,5 @@
-variable "project_name" {
-  description = "Name of the project"
-  type        = string
-}
-
-variable "environment" {
-  description = "Environment name"
+variable "function_name" {
+  description = "Name of the Lambda function"
   type        = string
 }
 
@@ -18,13 +13,13 @@ variable "dynamodb_table_name" {
   type        = string
 }
 
-variable "notification_email" {
-  description = "Email address to receive notifications"
+variable "ses_source_email" {
+  description = "Source email for SES"
   type        = string
 }
 
 variable "tags" {
-  description = "Tags to apply to resources"
+  description = "Tags to apply to Lambda resources"
   type        = map(string)
   default     = {}
 }

@@ -1,6 +1,6 @@
 # Lambda execution role
 resource "aws_iam_role" "lambda_role" {
-  name = "${var.project_name}-${var.environment}-lambda-role"
+  name = "${var.lambda_function_name}-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -14,19 +14,17 @@ resource "aws_iam_role" "lambda_role" {
       }
     ]
   })
-
-  tags = var.tags
 }
 
-# Basic Lambda execution policy
-resource "aws_iam_role_policy_attachment" "lambda_basic_execution" {
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+# Lambda basic execution policy
+resource "aws_iam_role_policy_attachment" "lambda_basic" {
   role       = aws_iam_role.lambda_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
 # DynamoDB policy for Lambda
-resource "aws_iam_role_policy" "lambda_dynamodb_policy" {
-  name = "${var.project_name}-${var.environment}-lambda-dynamodb-policy"
+resource "aws_iam_role_policy" "dynamodb_policy" {
+  name = "${var.lambda_function_name}-dynamodb-policy"
   role = aws_iam_role.lambda_role.id
 
   policy = jsonencode({
@@ -42,15 +40,15 @@ resource "aws_iam_role_policy" "lambda_dynamodb_policy" {
           "dynamodb:Query",
           "dynamodb:Scan"
         ]
-        Resource = var.dynamodb_table_arn
+        Resource = "arn:aws:dynamodb:*:*:table/${var.dynamodb_table_name}"
       }
     ]
   })
 }
 
 # SES policy for Lambda
-resource "aws_iam_role_policy" "lambda_ses_policy" {
-  name = "${var.project_name}-${var.environment}-lambda-ses-policy"
+resource "aws_iam_role_policy" "ses_policy" {
+  name = "${var.lambda_function_name}-ses-policy"
   role = aws_iam_role.lambda_role.id
 
   policy = jsonencode({
@@ -62,10 +60,7 @@ resource "aws_iam_role_policy" "lambda_ses_policy" {
           "ses:SendEmail",
           "ses:SendRawEmail"
         ]
-        Resource = [
-          var.ses_identity_arn,
-          "arn:aws:ses:*:*:configuration-set/*"
-        ]
+        Resource = "arn:aws:ses:*:*:identity/${var.ses_domain}"
       }
     ]
   })

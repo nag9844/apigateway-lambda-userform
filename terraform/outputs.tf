@@ -1,50 +1,25 @@
-output "api_gateway_url" {
-  description = "URL of the API Gateway"
-  value       = module.api_gateway.api_url
+output "api_endpoint" {
+  description = "API Gateway endpoint URL"
+  value       = module.api_gateway.api_endpoint
 }
 
-output "api_gateway_stage_url" {
-  description = "URL of the API Gateway stage"
-  value       = module.api_gateway.stage_url
-}
-
-output "lambda_function_name" {
-  description = "Name of the Lambda function"
-  value       = module.lambda.function_name
+output "api_key" {
+  description = "API Gateway API key"
+  value       = module.api_gateway.api_key
+  sensitive   = true
 }
 
 output "lambda_function_arn" {
-  description = "ARN of the Lambda function"
-  value       = module.lambda.function_arn
+  description = "Lambda function ARN"
+  value       = module.lambda.lambda_function_arn
 }
 
 output "dynamodb_table_name" {
-  description = "Name of the DynamoDB table"
+  description = "DynamoDB table name"
   value       = module.dynamodb.table_name
 }
 
-output "dynamodb_table_arn" {
-  description = "ARN of the DynamoDB table"
-  value       = module.dynamodb.table_arn
-}
-
-output "ses_identity_arn" {
-  description = "ARN of the SES identity"
-  value       = module.ses.identity_arn
-}
-
-output "ses_configuration_set_name" {
-  description = "Name of the SES configuration set"
-  value       = module.ses.configuration_set_name
-}
-
-output "iam_lambda_role_arn" {
-  description = "ARN of the Lambda IAM role"
-  value       = module.iam.lambda_role_arn
-}
-
-# Output for frontend environment variable
-output "frontend_api_endpoint" {
-  description = "API endpoint for frontend configuration"
-  value       = "${module.api_gateway.stage_url}/contact"
+output "ses_domain_identity" {
+  description = "SES domain identity"
+  value       = module.ses.domain_identity
 }

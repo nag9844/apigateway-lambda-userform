@@ -1,4 +1,3 @@
-# Configure the AWS Provider
 terraform {
   required_version = ">= 1.0"
   required_providers {
@@ -6,95 +5,69 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 5.0"
     }
-    archive = {
-      source  = "hashicorp/archive"
-      version = "~> 2.4"
-    }
   }
 }
 
 provider "aws" {
   region = var.aws_region
-  
-  default_tags {
-    tags = {
-      Project     = var.project_name
-      Environment = var.environment
-      ManagedBy   = "Terraform"
-    }
-  }
 }
 
 # Data sources
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
-# Local values
-locals {
-  account_id = data.aws_caller_identity.current.account_id
-  region     = data.aws_region.current.name
-  
-  common_tags = {
-    Project     = var.project_name
-    Environment = var.environment
-    ManagedBy   = "Terraform"
-  }
-}
-
-# IAM Module
+# IAM module
 module "iam" {
   source = "./modules/iam"
   
-  project_name    = var.project_name
-  environment     = var.environment
-  dynamodb_table_arn = module.dynamodb.table_arn
-  ses_identity_arn   = module.ses.identity_arn
-  
-  tags = local.common_tags
+  lambda_function_name = var.lambda_function_name
+  dynamodb_table_name  = var.dynamodb_table_name
+  ses_domain          = var.ses_domain
 }
 
-# DynamoDB Module
+# DynamoDB module
 module "dynamodb" {
   source = "./modules/dynamodb"
   
-  project_name = var.project_name
-  environment  = var.environment
-  
-  tags = local.common_tags
+  table_name = var.dynamodb_table_name
+  tags       = var.tags
 }
 
-# SES Module
+# SES module
 module "ses" {
   source = "./modules/ses"
   
-  project_name     = var.project_name
-  environment      = var.environment
+  domain           = var.ses_domain
   notification_email = var.notification_email
-  
-  tags = local.common_tags
+  tags             = var.tags
 }
 
-# Lambda Module
+# Lambda module
 module "lambda" {
   source = "./modules/lambda"
   
-  project_name        = var.project_name
-  environment         = var.environment
-  lambda_role_arn     = module.iam.lambda_role_arn
-  dynamodb_table_name = module.dynamodb.table_name
-  notification_email  = var.notification_email
-  
-  tags = local.common_tags
+  function_name        = var.lambda_function_name
+  lambda_role_arn      = module.iam.lambda_role_arn
+  dynamodb_table_name  = var.dynamodb_table_name
+  ses_source_email     = var.notification_email
+  tags                 = var.tags
 }
 
-# API Gateway Module
+# API Gateway module
 module "api_gateway" {
   source = "./modules/api-gateway"
   
-  project_name      = var.project_name
-  environment       = var.environment
-  lambda_function_arn = module.lambda.function_arn
-  lambda_function_name = module.lambda.function_name
-  
-  tags = local.common_tags
+  api_name            = var.api_name
+  lambda_function_arn = module.lambda.lambda_function_arn
+  lambda_function_name = var.lambda_function_name
+  tags                = var.tags
+}
+
+# Lambda permission for API Gateway
+resource "aws_lambda_permission" "api_gateway" {
+  statement_id  = "AllowAPIGatewayInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = module.lambda.lambda_function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${module.api_gateway.api_execution_arn}/*/*"
 }

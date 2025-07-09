@@ -1,14 +1,5 @@
-variable "project_name" {
-  description = "Name of the project"
-  type        = string
-}
-
-variable "region" {
-  default = "ap-south-1"
-}
-
-variable "environment" {
-  description = "Environment name"
+variable "api_name" {
+  description = "Name of the API Gateway"
   type        = string
 }
 
@@ -23,7 +14,7 @@ variable "lambda_function_name" {
 }
 
 variable "tags" {
-  description = "Tags to apply to resources"
+  description = "Tags to apply to API Gateway resources"
   type        = map(string)
   default     = {}
 }

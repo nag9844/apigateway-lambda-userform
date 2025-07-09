@@ -1,15 +1,10 @@
-variable "project_name" {
-  description = "Name of the project"
-  type        = string
-}
-
-variable "environment" {
-  description = "Environment name"
+variable "table_name" {
+  description = "Name of the DynamoDB table"
   type        = string
 }
 
 variable "tags" {
-  description = "Tags to apply to resources"
+  description = "Tags to apply to the table"
   type        = map(string)
   default     = {}
 }

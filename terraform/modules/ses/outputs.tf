@@ -1,14 +1,14 @@
-output "identity_arn" {
-  description = "ARN of the SES email identity"
-  value       = aws_ses_email_identity.notification_email.arn
+output "domain_identity" {
+  description = "SES domain identity"
+  value       = aws_ses_domain_identity.domain.domain
 }
 
-output "configuration_set_name" {
-  description = "Name of the SES configuration set"
-  value       = aws_ses_configuration_set.contact_form.name
+output "domain_verification_token" {
+  description = "Domain verification token"
+  value       = aws_ses_domain_identity.domain.verification_token
 }
 
-output "configuration_set_arn" {
-  description = "ARN of the SES configuration set"
-  value       = aws_ses_configuration_set.contact_form.arn
+output "dkim_tokens" {
+  description = "DKIM tokens for domain verification"
+  value       = aws_ses_domain_dkim.domain.dkim_tokens
 }
