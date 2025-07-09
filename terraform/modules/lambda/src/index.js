@@ -22,6 +22,14 @@ const ses = new AWS.SES({
 const DYNAMODB_TABLE_NAME = process.env.DYNAMODB_TABLE_NAME;
 const NOTIFICATION_EMAIL = process.env.NOTIFICATION_EMAIL;
 
+// Validate environment variables
+if (!DYNAMODB_TABLE_NAME) {
+    console.error('❌ DYNAMODB_TABLE_NAME environment variable is not set');
+}
+if (!NOTIFICATION_EMAIL) {
+    console.error('❌ NOTIFICATION_EMAIL environment variable is not set');
+}
+
 // CORS headers
 const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
@@ -67,6 +75,10 @@ function sanitizeInput(str) {
 async function saveToDatabase(data) {
     console.log('💾 Attempting to save to DynamoDB table:', DYNAMODB_TABLE_NAME);
     
+    if (!DYNAMODB_TABLE_NAME) {
+        throw new Error('DynamoDB table name not configured');
+    }
+    
     const item = {
         id: uuidv4(),
         name: sanitizeInput(data.name.trim()),
@@ -101,6 +113,10 @@ async function sendNotificationEmail(data) {
     console.log('📧 Attempting to send email via SES');
     console.log('📬 From email:', NOTIFICATION_EMAIL);
     console.log('📮 To email:', NOTIFICATION_EMAIL);
+    
+    if (!NOTIFICATION_EMAIL) {
+        throw new Error('Notification email not configured');
+    }
     
     const htmlBody = `
         <!DOCTYPE html>
@@ -216,7 +232,7 @@ exports.handler = async (event) => {
             return {
                 statusCode: 200,
                 headers: corsHeaders,
-                body: JSON.stringify({ message: 'CORS preflight successful' })
+                body: ''
             };
         }
         
