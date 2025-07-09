@@ -41,26 +41,7 @@ Frontend → API Gateway → Lambda → DynamoDB
 - Node.js >= 18
 - Git
 
-##  Local Development
 
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd serverless-contact-form
-   ```
-
-2. **Start development server**
-   ```bash
-   npm run dev
-   ```
-   
-   Or simply open `index.html` in your browser.
-
-3. **Configure API endpoint**
-   Edit the `API_ENDPOINT` variable in `index.html`:
-   ```javascript
-   const API_ENDPOINT = 'https://your-actual-api-gateway-url.amazonaws.com/prod/contact';
-   ```
 ##  Infrastructure Deployment
 
 ### Manual Deployment
@@ -99,8 +80,7 @@ Frontend → API Gateway → Lambda → DynamoDB
 ### Automated Deployment with GitHub Actions
 
 1. **Set up repository secrets**
-   - `AWS_ACCESS_KEY_ID`
-   - `AWS_SECRET_ACCESS_KEY`
+   - `AWS_OIDC_role`
    - `NOTIFICATION_EMAIL`
 
 2. **Push to main branch**
@@ -127,12 +107,6 @@ The GitHub Actions workflow will:
 
 ##  Configuration
 
-### Environment Variables
-
-Create `.env.production` for production:
-```env
-VITE_API_ENDPOINT=https://your-api-gateway-url.amazonaws.com/prod/contact
-```
 
 ### Terraform Variables
 
@@ -145,7 +119,7 @@ VITE_API_ENDPOINT=https://your-api-gateway-url.amazonaws.com/prod/contact
 | `lambda_timeout` | Lambda timeout (seconds) | `30` |
 | `lambda_memory_size` | Lambda memory (MB) | `128` |
 
-## 📊 Monitoring
+## Monitoring
 
 ### CloudWatch Logs
 - Lambda function logs: `/aws/lambda/{function-name}`
