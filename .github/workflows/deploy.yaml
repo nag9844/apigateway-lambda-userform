@@ -45,6 +45,7 @@ jobs:
       working-directory: ./terraform
       env:
         TF_VAR_notification_email: ${{ secrets.NOTIFICATION_EMAIL }}
+        TF_VAR_aws_region: ${{ env.AWS_REGION }}
 
   deploy-infrastructure:
     name: Deploy Infrastructure
@@ -60,6 +61,8 @@ jobs:
 
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_wrapper: false
 
     - name: Configure AWS Credentials (OIDC)
       uses: aws-actions/configure-aws-credentials@v3
@@ -78,6 +81,7 @@ jobs:
         TF_VAR_notification_email: ${{ secrets.NOTIFICATION_EMAIL }}
         TF_VAR_project_name: serverless-contact-form
         TF_VAR_environment: prod
+        TF_VAR_aws_region: ${{ env.AWS_REGION }}
 
     - name: Get Terraform Outputs
       id: terraform-output
@@ -96,25 +100,41 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-        cache: 'npm'
-
-    - name: Install dependencies
-      run: npm install
-      # working-directory: ./src
-
-    - name: Create environment file
+    - name: Update API Endpoint in HTML
       run: |
-        echo "VITE_API_ENDPOINT=${{ needs.deploy-infrastructure.outputs.api_endpoint }}" > .env.production
+        API_ENDPOINT="${{ needs.deploy-infrastructure.outputs.api_endpoint }}"
+        echo "Updating API endpoint to: $API_ENDPOINT"
+        
+        # Replace the API endpoint in index.html
+        sed -i "s|const API_ENDPOINT = 'https://your-api-gateway-url.amazonaws.com/prod/contact';|const API_ENDPOINT = '$API_ENDPOINT';|g" index.html
+        
+        # Verify the change
+        grep "const API_ENDPOINT" index.html
 
-    - name: Build application
-      run: npm run build
-    - name: Deploy to S3 (Optional)
+    - name: Create dist directory and copy files
       run: |
-        echo "Frontend built successfully!"
-        echo "API Endpoint: ${{ needs.deploy-infrastructure.outputs.api_endpoint }}"
-        echo "You can deploy the 'dist' folder to your preferred hosting service"
+        mkdir -p dist
+        cp index.html dist/
+        echo "Files in dist directory:"
         ls -la dist/
+
+    - name: Display deployment info
+      run: |
+        echo "✅ Frontend prepared successfully!"
+        echo "📍 API Endpoint: ${{ needs.deploy-infrastructure.outputs.api_endpoint }}"
+        echo "📁 Files ready for deployment in 'dist' folder:"
+        ls -la dist/
+        echo ""
+        echo "🚀 You can now deploy the 'dist/index.html' file to any web hosting service:"
+        echo "   - GitHub Pages"
+        echo "   - Netlify"
+        echo "   - Vercel"
+        echo "   - AWS S3 Static Website"
+        echo "   - Any web server"
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: contact-form-html
+        path: dist/
+        retention-days: 30
