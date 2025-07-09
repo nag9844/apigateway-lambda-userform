@@ -57,10 +57,11 @@ module "lambda" {
 module "api_gateway" {
   source = "./modules/api-gateway"
   
-  api_name            = var.api_name
-  lambda_function_arn = module.lambda.lambda_function_arn
-  lambda_function_name = var.lambda_function_name
-  tags                = var.tags
+  api_name                    = var.api_name
+  lambda_function_arn         = module.lambda.lambda_function_arn
+  lambda_function_invoke_arn  = module.lambda.lambda_function_invoke_arn
+  lambda_function_name        = var.lambda_function_name
+  tags                        = var.tags
 }
 
 # Lambda permission for API Gateway
